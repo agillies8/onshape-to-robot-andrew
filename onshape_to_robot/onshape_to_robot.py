@@ -77,7 +77,7 @@ def main():
             symbol = '-'
             extra += Style.DIM + ' / ignoring visual and collision'
 
-        print(Fore.GREEN + symbol+' Adding part ' +
+        print(Fore.GREEN + symbol+' Addding part ' +
             occurrence['instance']['name']+extra + Style.RESET_ALL)
 
         if partIsIgnore(justPart):

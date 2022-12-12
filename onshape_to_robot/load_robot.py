@@ -64,7 +64,7 @@ root = assembly['rootAssembly']
 # the final part
 
 
-def findInstance(path, instances=None):
+def findInstance(path, instances=None, suppressed=False):
     global assembly
 
     if instances is None:
@@ -72,17 +72,23 @@ def findInstance(path, instances=None):
 
     for instance in instances:
         if instance['id'] == path[0]:
+
+            # If the length of remaining path is 1, the part is in the current assembly/subassembly
             if len(path) == 1:
-                # If the length of remaining path is 1, the part is in the current assembly/subassembly
+                
+                #if the top level instance is supressed, this will get pushed down to the part at the bottom of the chain
+                if suppressed == True:
+                    instance['suppressed'] = True
                 return instance
             else:
                 # Else, we need to find the matching sub assembly to find the proper part (recursively)
                 d = instance['documentId']
                 m = instance['documentMicroversion']
                 e = instance['elementId']
+                suppressed = instance['suppressed'] #sets supressed flag to true and passes it to next layer in the recursion
                 for asm in assembly['subAssemblies']:
                     if asm['documentId'] == d and asm['documentMicroversion'] == m and asm['elementId'] == e:
-                        return findInstance(path[1:], asm['instances'])
+                        return findInstance(path[1:], asm['instances'], suppressed)
 
     print(Fore.RED + 'Could not find instance for ' + str(path) + Style.RESET_ALL)
 
